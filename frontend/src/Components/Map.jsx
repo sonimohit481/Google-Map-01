@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect, memo } from "react";
 import {
   GoogleMap,
   useJsApiLoader,
@@ -17,14 +17,26 @@ const options = {
   strokeWeight: 2,
 };
 
-function Map() {
-  const [paths, setPaths] = React.useState([]);
-  React.useEffect(() => {
-    fetch(`https://googlemapbackend.onrender.com/`)
-      .then((res) => res.json())
-      .then((data) => setPaths(data))
-      .catch((Err) => console.log(Err));
+const Map = () => {
+  const [paths, setPaths] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`https://googlemapbackend.onrender.com/`);
+        const data = await response.json();
+        setPaths(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
+
   const center = paths[0];
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
@@ -40,22 +52,24 @@ function Map() {
         borderRadius: "10px",
       }}
     >
-      <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={7}>
-        {paths.map((item) => {
-          return (
-            <Marker
-              position={{ lat: item.lat, lng: item.lng }}
-              key={item.lat}
-              style={{ with: 1 }}
-            />
-          );
-        })}
-        <Polygon paths={paths} options={options} />
-      </GoogleMap>
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={7}>
+          {paths.map((item) => {
+            return (
+              <Marker
+                position={{ lat: item.lat, lng: item.lng }}
+                key={item.lat}
+                style={{ with: 1 }}
+              />
+            );
+          })}
+          <Polygon paths={paths} options={options} />
+        </GoogleMap>
+      )}
     </Box>
-  ) : (
-    <></>
-  );
-}
+  ) : null;
+};
 
-export default React.memo(Map);
+export default memo(Map);
