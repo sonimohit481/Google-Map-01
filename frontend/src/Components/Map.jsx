@@ -40,8 +40,9 @@ const Map = () => {
   const center = paths[0];
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: "AIzaSyBHULU2zApDcYnnj3Mrg4mEaq5q3mdsO68",
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_KEY,
   });
+  console.log("process.env.GOOGLE_KEY", process.env.REACT_APP_GOOGLE_KEY);
   return isLoaded ? (
     <Box
       sx={{
@@ -56,11 +57,11 @@ const Map = () => {
         <p>Loading...</p>
       ) : (
         <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={7}>
-          {paths.map((item) => {
+          {paths.map((item, index) => {
             return (
               <Marker
                 position={{ lat: item.lat, lng: item.lng }}
-                key={item.lat}
+                key={index}
                 style={{ with: 1 }}
               />
             );
