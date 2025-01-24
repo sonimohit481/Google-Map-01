@@ -1,29 +1,50 @@
-# Google Map 01
+# React + TypeScript + Vite
 
-[![Banner](https://raw.githubusercontent.com/sonimohit481/Google-Map-01/main/banner.png)](https://random-coordinate-generator.netlify.app/)
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-This is a simple project showcasing a Google Map with a random coordinate generator.
+Currently, two official plugins are available:
 
-## Deployed App
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-Check out the deployed app [here](https://random-coordinate-generator.netlify.app/).
+## Expanding the ESLint configuration
 
-## Overview
+If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
 
-This project demonstrates the integration of Google Maps and a random coordinate generator. Feel free to explore the code and use it as a reference for your own projects.
+- Configure the top-level `parserOptions` property like this:
 
-## Technologies Used
+```js
+export default tseslint.config({
+  languageOptions: {
+    // other options...
+    parserOptions: {
+      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+})
+```
 
-- HTML
-- CSS
-- JavaScript
-- Google Maps API
+- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
+- Optionally add `...tseslint.configs.stylisticTypeChecked`
+- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
 
-## Getting Started
+```js
+// eslint.config.js
+import react from 'eslint-plugin-react'
 
-To get started with the project, follow these steps:
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/sonimohit481/Google-Map-01.git
+export default tseslint.config({
+  // Set the react version
+  settings: { react: { version: '18.3' } },
+  plugins: {
+    // Add the react plugin
+    react,
+  },
+  rules: {
+    // other rules...
+    // Enable its recommended rules
+    ...react.configs.recommended.rules,
+    ...react.configs['jsx-runtime'].rules,
+  },
+})
+```
